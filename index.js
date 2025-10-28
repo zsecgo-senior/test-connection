@@ -308,8 +308,8 @@ async function runTests(protocol = null) {
 	}
 }
 
-// Start the HTTP server
-const PORT = 3003
+// Start the HTTP server (allow overriding via PORT env var)
+const PORT = Number(process.env.PORT) || 3003
 server.listen(PORT, () => {
 	console.log(`Web interface running at http://localhost:${PORT}`)
 	console.log('Starting performance tests...')

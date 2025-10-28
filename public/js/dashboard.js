@@ -185,7 +185,8 @@ function updateCharts(tcpData, udpData, quicData) {
 
 // WebSocket ulanishini boshqarish
 function connectWebSocket() {
-	const ws = new WebSocket('ws://localhost:3003')
+	// Connect to the same host/port that served this page so the client works when the server port is changed
+	const ws = new WebSocket('ws://' + window.location.host)
 
 	ws.onmessage = event => {
 		console.log('Data received:', event.data)
@@ -283,3 +284,36 @@ if (relaunchBtn) {
 		}
 	})
 }
+
+// Wire per-protocol restart buttons
+const tcpRestartBtn = document.getElementById('tcp-restart')
+const udpRestartBtn = document.getElementById('udp-restart')
+const quicRestartBtn = document.getElementById('quic-restart')
+
+function sendProtocolRelaunch(protocol) {
+	try {
+		// disable the global relaunch while a protocol run is starting
+		if (relaunchBtn) relaunchBtn.disabled = true
+		if (runStatus) runStatus.textContent = `starting ${protocol}`
+		if (ws && ws.readyState === 1) {
+			ws.send(JSON.stringify({ action: 'relaunch', protocol: protocol }))
+		} else {
+			ws = connectWebSocket()
+			setTimeout(() => {
+				if (ws && ws.readyState === 1)
+					ws.send(JSON.stringify({ action: 'relaunch', protocol: protocol }))
+			}, 500)
+		}
+	} catch (err) {
+		console.error('Failed to send protocol relaunch request:', err)
+		if (relaunchBtn) relaunchBtn.disabled = false
+		if (runStatus) runStatus.textContent = 'error'
+	}
+}
+
+if (tcpRestartBtn)
+	tcpRestartBtn.addEventListener('click', () => sendProtocolRelaunch('tcp'))
+if (udpRestartBtn)
+	udpRestartBtn.addEventListener('click', () => sendProtocolRelaunch('udp'))
+if (quicRestartBtn)
+	quicRestartBtn.addEventListener('click', () => sendProtocolRelaunch('quic'))
