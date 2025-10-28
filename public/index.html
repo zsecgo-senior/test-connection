@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Network Protocol Performance Dashboard</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<style>
+		.protocol-card {
+			transition: transform 0.2s;
+		}
+
+		.protocol-card:hover {
+			transform: translateY(-5px);
+		}
+
+		.metric-value {
+			font-size: 1.5rem;
+			font-weight: bold;
+		}
+
+		.chart-container {
+			position: relative;
+			height: 300px;
+			margin-bottom: 2rem;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container py-4">
+		<div class="d-flex justify-content-between align-items-center mb-4">
+			<h1 class="m-0">Network Protocol Performance Dashboard</h1>
+			<div>
+				<button id="relaunch-btn" class="btn btn-primary me-2">Relaunch Tests</button>
+				<span id="run-status" class="badge bg-secondary">idle</span>
+			</div>
+		</div>
+
+		<!-- Protocol Cards -->
+		<div class="row mb-4">
+			<div class="col-md-4">
+				<div class="card protocol-card shadow-sm h-100">
+					<div class="card-body">
+						<div class="d-flex justify-content-between align-items-center mb-3">
+							<div>
+								<h5 class="card-title text-primary d-inline me-2">TCP</h5>
+								<span id="tcp-status" class="badge bg-secondary">disconnected</span>
+							</div>
+							<button id="tcp-restart" class="btn btn-outline-primary btn-sm">Restart TCP Test</button>
+						</div>
+						<div id="tcp-metrics"></div>
+						<div class="mt-2">
+							<small id="tcp-connection" class="text-muted">Connection: -</small>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card protocol-card shadow-sm h-100">
+					<div class="card-body">
+						<div class="d-flex justify-content-between align-items-center mb-3">
+							<div>
+								<h5 class="card-title text-success d-inline me-2">UDP</h5>
+								<span id="udp-status" class="badge bg-secondary">disconnected</span>
+							</div>
+							<button id="udp-restart" class="btn btn-outline-success btn-sm">Restart UDP Test</button>
+						</div>
+						<div id="udp-metrics"></div>
+						<div class="mt-2">
+							<small id="udp-connection" class="text-muted">Connection: -</small>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="card protocol-card shadow-sm h-100">
+					<div class="card-body">
+						<div class="d-flex justify-content-between align-items-center mb-3">
+							<div>
+								<h5 class="card-title text-info d-inline me-2">QUIC</h5>
+								<span id="quic-status" class="badge bg-secondary">disconnected</span>
+							</div>
+							<button id="quic-restart" class="btn btn-outline-info btn-sm">Restart QUIC Test</button>
+						</div>
+						<div id="quic-metrics"></div>
+						<div class="mt-2">
+							<small id="quic-connection" class="text-muted">Connection: -</small>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Comparison Table Card -->
+		<div class="card shadow-sm mb-4">
+			<div class="card-body">
+				<h5 class="card-title">Performance Comparison</h5>
+				<div class="table-responsive">
+					<table class="table" id="comparison-table">
+						<thead>
+							<tr>
+								<th>Metric</th>
+								<th>TCP</th>
+								<th>UDP</th>
+								<th>QUIC</th>
+								<th>Unit</th>
+							</tr>
+						</thead>
+						<tbody id="comparison-body"></tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+
+		<!-- Charts -->
+		<div class="row">
+			<div class="col-md-6">
+				<div class="card shadow-sm mb-4">
+					<div class="card-body">
+						<h5 class="card-title">Latency Comparison</h5>
+						<div class="chart-container">
+							<canvas id="latencyChart"></canvas>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="card shadow-sm mb-4">
+					<div class="card-body">
+						<h5 class="card-title">Throughput Comparison</h5>
+						<div class="chart-container">
+							<canvas id="throughputChart"></canvas>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="js/dashboard.js"></script>
+</body>
+
+</html>
